@@ -5,6 +5,7 @@ MAINTAINER LABEL Rich Rose
 RUN apt update -y && apt upgrade -y && \
   apt-get install -y \ 
   build-essential \
+  libnss3 \
   libssl-dev \
   libffi-dev \
   python3-dev \
@@ -18,3 +19,15 @@ RUN apt update -y && apt upgrade -y && \
 RUN wget --no-check-certificate -nv https://download.calibre-ebook.com/linux-installer.sh && \
   chmod +x ./linux-installer.sh && \
   bash ./linux-installer.sh
+  
+# Setup user account
+ENV HOME /home/library
+RUN useradd --create-home --home-dir $HOME library \
+        && chown -R library:library $HOME
+
+# Switch to the user account
+USER library
+
+# Set the Work Directory
+WORKDIR $HOME/docs
+
